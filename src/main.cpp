@@ -1,4 +1,4 @@
-#define MYDEBUG
+//#define MYDEBUG
 #include "debug.h"
 // #include "pindefine.h"
 #include <Arduino.h>
@@ -9,58 +9,102 @@ unsigned long oldpassingtimeLB1=0;
 unsigned long oldpassingtimeLB2=0;
 volatile bool LBinterrupted=false;
 
-float sensordistance= 1; //m
+// double sensordistance= 0.1; //m
+double sensordistance=0.785398163;
+
 
 #define lightbarrier1 (2) // Interrupt on Pin 1 or 2 (UNO)
-#define lightbarrier2 (3)
+#define lightbarrier2 (2)
 
-void ISRLB1() {
-  DEBUG_PRINTLN("ISRLB1");
-  // detachInterrupt(digitalPinToInterrupt(lightbarrier1));
- passingtimeLB1=micros(); //Auflösung auf 4 micros
- DEBUG_PRINTLN(passingtimeLB1);
-  // attachInterrupt(digitalPinToInterrupt(lightbarrier1), ISRtacho, FALLING);
-}
+void ISRLB1();
+void ISRLB2();
+double calculate_velocity_ms();
 
-void ISRLB2() {
-  DEBUG_PRINTLN("ISRLB2");
-  // detachInterrupt(digitalPinToInterrupt(lightbarrier2));
- passingtimeLB2=micros();
- DEBUG_PRINTLN(passingtimeLB2);
- LBinterrupted=true;
-  // attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRtacho, FALLING);
-}
 
 void setup() {
   Serial.begin(9600);                // Set serial monitor baud rate
  // Interrupt Pins for  Uno, Nano, Mini: 2, 3
   attachInterrupt(digitalPinToInterrupt(lightbarrier1), ISRLB1, FALLING);
-  attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRLB2, FALLING);
+  // attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRLB2, FALLING);
   DEBUG_PRINTLN("Arduino Initialise");
 }
 
 void loop() {
-  delay(5);
+  delay(50);
   if (LBinterrupted==true) {
       LBinterrupted=false;
-      float temp = passingtimeLB2-passingtimeLB1;
-      if (temp > 0 && (passingtimeLB1!=oldpassingtimeLB1)) { //&& passingtimeLB2!=oldpassingtimeLB2
-        DEBUG_PRINT("Zeit [us]: ");
-        DEBUG_PRINTLN(temp);
 
-        DEBUG_PRINT("Zeit [s]: ");
-        DEBUG_PRINTLN(temp/1000000);
-
-        DEBUG_PRINT("Geschwindigkeit [m/s]: ");
-        DEBUG_PRINTLN(sensordistance/(temp/1000000));
-      }
-      else{
-        DEBUG_PRINT("Error, Negativ Time: ");
-        DEBUG_PRINTLN(temp);
-      }
-      oldpassingtimeLB1=passingtimeLB1;
-      oldpassingtimeLB2=passingtimeLB2;
-      passingtimeLB1=0;
-      passingtimeLB2=0;
-  }
+      double velocitykmh=calculate_velocity_ms()*3.6;
+      if(velocitykmh!=0){
+      Serial.print("Geschwindigkeit [km/h]: ");
+      Serial.println(velocitykmh);
+    }
+ }
 }
+
+void ISRLB1() {
+ detachInterrupt(digitalPinToInterrupt(lightbarrier1));
+ DEBUG_PRINT("ISRLB1() - ");
+ passingtimeLB1=micros(); //Auflösung auf 4 micros
+ delay(1);
+ DEBUG_PRINTLN(passingtimeLB1);
+ attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRLB2, FALLING);
+}
+
+void ISRLB2() {
+detachInterrupt(digitalPinToInterrupt(lightbarrier2));
+ DEBUG_PRINT("ISRLB2() - ");
+  // detachInterrupt(digitalPinToInterrupt(lightbarrier2));
+ passingtimeLB2=micros();
+ delay(1);
+ DEBUG_PRINTLN(passingtimeLB2);
+ LBinterrupted=true;
+  // attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRtacho, FALLING);
+  attachInterrupt(digitalPinToInterrupt(lightbarrier1), ISRLB1, FALLING);
+}
+
+double calculate_velocity_ms(){
+  DEBUG_PRINTLN("calculate_velocity_ms() ");
+  long passedTimeinUS = passingtimeLB2-passingtimeLB1;
+  double passedTimeinS=0.0;
+  double velocityms=0.0;
+
+  DEBUG_PRINT("passingtimeLB1: ");
+  DEBUG_PRINTLN(passingtimeLB1);
+  DEBUG_PRINT("passingtimeLB2: ");
+  DEBUG_PRINTLN(passingtimeLB2);
+  DEBUG_PRINT("passedTimeinUS: ");
+  DEBUG_PRINTLN(passedTimeinUS);
+
+  if (passedTimeinUS > 0 && (passingtimeLB1!=oldpassingtimeLB1) && (passingtimeLB2!=oldpassingtimeLB2)) {
+    DEBUG_PRINT("Zeit [us]: ");
+    DEBUG_PRINTLN(passedTimeinUS);
+
+    passedTimeinS=passedTimeinUS/1000000.0;
+    DEBUG_PRINT("Zeit [s]: ");
+    DEBUG_PRINTLN(passedTimeinS);
+
+    velocityms=sensordistance/passedTimeinS;
+    DEBUG_PRINT("Geschwindigkeit [m/s]: ");
+    DEBUG_PRINTLN(velocityms);
+  }
+  else{
+    DEBUG_PRINT("Error, Negativ Time or same passingtime: ");
+    DEBUG_PRINTLN(passedTimeinUS);
+    velocityms=0;
+  }
+  oldpassingtimeLB1=passingtimeLB1;
+  oldpassingtimeLB2=passingtimeLB2;
+  passingtimeLB1=0;
+  passingtimeLB2=0;
+  return velocityms;
+}
+
+// void test_calculate_velocity() {
+//   unsigned long start = millis();
+//   cout << "millis() test start: " << start << endl;
+//
+//   }
+//   unsigned long end = millis();
+//   cout << "End of test - duration: " << end - start << "ms" << endl;
+// }
