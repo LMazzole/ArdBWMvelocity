@@ -3,19 +3,21 @@
 // #include "pindefine.h"
 #include <Arduino.h>
 
+//===========Global Variabel===========
 volatile unsigned long passingtimeLB1 = 0;
 volatile unsigned long passingtimeLB2 = 0;
 unsigned long oldpassingtimeLB1=0;
 unsigned long oldpassingtimeLB2=0;
 volatile bool LBinterrupted=false;
 
-// double sensordistance= 0.1; //m
-double sensordistance=0.785398163;
+const double sensordistance= 0.101; //m
+// double sensordistance=0.785398163;
 
+//===========Pindefine===========
+#define lightbarrier1 (2) // Interrupt on Pin 2 or 3 (UNO)
+#define lightbarrier2 (3)
 
-#define lightbarrier1 (2) // Interrupt on Pin 1 or 2 (UNO)
-#define lightbarrier2 (2)
-
+//===========Functionprototype===========
 void ISRLB1();
 void ISRLB2();
 double calculate_velocity_ms();
@@ -25,42 +27,44 @@ void setup() {
   Serial.begin(9600);                // Set serial monitor baud rate
  // Interrupt Pins for  Uno, Nano, Mini: 2, 3
   attachInterrupt(digitalPinToInterrupt(lightbarrier1), ISRLB1, FALLING);
-  // attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRLB2, FALLING);
+  attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRLB2, FALLING);
+
   DEBUG_PRINTLN("Arduino Initialise");
 }
 
 void loop() {
-  delay(50);
+  delay(1000); //Update only once per Second
   if (LBinterrupted==true) {
       LBinterrupted=false;
 
       double velocitykmh=calculate_velocity_ms()*3.6;
       if(velocitykmh!=0){
-      Serial.print("Geschwindigkeit [km/h]: ");
+      Serial.print("Geschwindigkeit [km/h]:");
+      Serial.print('\t');
       Serial.println(velocitykmh);
     }
  }
 }
 
 void ISRLB1() {
- detachInterrupt(digitalPinToInterrupt(lightbarrier1));
+ // detachInterrupt(digitalPinToInterrupt(lightbarrier1));
  DEBUG_PRINT("ISRLB1() - ");
  passingtimeLB1=micros(); //Auflösung auf 4 micros
- delay(1);
+ // delay(1);
  DEBUG_PRINTLN(passingtimeLB1);
- attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRLB2, FALLING);
+ // attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRLB2, FALLING);
 }
 
 void ISRLB2() {
-detachInterrupt(digitalPinToInterrupt(lightbarrier2));
+// detachInterrupt(digitalPinToInterrupt(lightbarrier2));
  DEBUG_PRINT("ISRLB2() - ");
   // detachInterrupt(digitalPinToInterrupt(lightbarrier2));
  passingtimeLB2=micros();
- delay(1);
+ // delay(1);
  DEBUG_PRINTLN(passingtimeLB2);
  LBinterrupted=true;
   // attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRtacho, FALLING);
-  attachInterrupt(digitalPinToInterrupt(lightbarrier1), ISRLB1, FALLING);
+  // attachInterrupt(digitalPinToInterrupt(lightbarrier1), ISRLB1, FALLING);
 }
 
 double calculate_velocity_ms(){
@@ -95,8 +99,8 @@ double calculate_velocity_ms(){
   }
   oldpassingtimeLB1=passingtimeLB1;
   oldpassingtimeLB2=passingtimeLB2;
-  passingtimeLB1=0;
-  passingtimeLB2=0;
+  // passingtimeLB1=0;
+  // passingtimeLB2=0;
   return velocityms;
 }
 
