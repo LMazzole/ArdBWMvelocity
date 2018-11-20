@@ -11,8 +11,8 @@ unsigned long passingdurationLB1 = 0;
 unsigned long passingdurationLB2 = 0;
 volatile bool LBinterrupted=false;
 
-const double sensordistance= 0.101; //m
-const double ballwidth= 0.072; //m -> 72mm
+const double sensordistance= 10.1*1000; //um
+const double ballwidth= 72*1000; //um -> 72mm
 
 //===========Pindefine===========
 #define lightbarrier1 (2) // Interrupt on Pin 2 or 3 (UNO)
@@ -41,12 +41,12 @@ void loop() {
   DEBUG_PRINTLN(calculate_velocity_ms(passingdurationLB2)*3.6);
   // velocityTracking.calculate_velocity_ms(passingdurationLB1)*3.6;
 
-  if (LBinterrupted==true) {
+  if (LBinterrupted) {
       LBinterrupted=false;
 
       double velocitykmh=calculate_velocity_ms()*3.6;
       if(velocitykmh!=0){
-      countingvar++;
+      countingvar+=1;
       Serial.print(countingvar);
       Serial.print("\t");
       Serial.print("Geschwindigkeit [km/h]:");
@@ -72,7 +72,6 @@ void ISRLB2() {
 double calculate_velocity_ms(){
     DEBUG_PRINTLN("calculate_velocity_ms() ");
   long passedTimeinUS = passingtimeLB2-passingtimeLB1;
-  double passedTimeinS=0.0;
   double velocityms=0.0;
     DEBUG_PRINT("passingtimeLB1: ");
     DEBUG_PRINTLN(passingtimeLB1);
@@ -84,10 +83,9 @@ double calculate_velocity_ms(){
   if (passedTimeinUS > 0 && (passingtimeLB1!=oldpassingtimeLB1) && (passingtimeLB2!=oldpassingtimeLB2)) {
       DEBUG_PRINT("Zeit [us]: ");
       DEBUG_PRINTLN(passedTimeinUS);
-    passedTimeinS=passedTimeinUS/1000000.0;
       DEBUG_PRINT("Zeit [s]: ");
-      DEBUG_PRINTLN(passedTimeinS);
-    velocityms=sensordistance/passedTimeinS;
+      DEBUG_PRINTLN(passedTimeinUS/1000000.0);
+    velocityms=sensordistance/passedTimeinUS;
       DEBUG_PRINT("Geschwindigkeit [m/s]: ");
       DEBUG_PRINTLN(velocityms);
   }
@@ -103,14 +101,12 @@ double calculate_velocity_ms(){
 
 double calculate_velocity_ms(unsigned long passingduration){
     DEBUG_PRINTLN("calculate_velocity_ms(unsigned long passingduration) ");
-  double passedTimeinS=0.0;
   double velocityms=0.0;
     DEBUG_PRINT("Zeit [us]: ");
     DEBUG_PRINTLN(passingduration);
-  passedTimeinS=passingduration/1000000.0;
     DEBUG_PRINT("Zeit [s]: ");
-    DEBUG_PRINTLN(passedTimeinS);
-  velocityms=ballwidth/passedTimeinS;
+    DEBUG_PRINTLN(passingduration/1000000.0);
+  velocityms=ballwidth/passingduration;
     DEBUG_PRINT("Geschwindigkeit [m/s]: ");
     DEBUG_PRINTLN(velocityms);
     return velocityms;
