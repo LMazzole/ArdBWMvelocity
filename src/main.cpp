@@ -4,7 +4,9 @@
 
 //===========Global Variabel===========
 volatile unsigned long passingtimeLB1 = 0;
+volatile unsigned long passingtimeLB12 = 0;
 volatile unsigned long passingtimeLB2 = 0;
+volatile unsigned long passingtimeLB22 = 0;
 unsigned long oldpassingtimeLB1=0;
 unsigned long oldpassingtimeLB2=0;
 unsigned long passingdurationLB1 = 0;
@@ -28,8 +30,8 @@ int countingvar = 0;
 void setup() {
   Serial.begin(9600);                // Set serial monitor baud rate
  // Interrupt Pins for  Uno, Nano, Mini: 2, 3
-  attachInterrupt(digitalPinToInterrupt(lightbarrier1), ISRLB1, FALLING);
-  attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRLB2, FALLING);
+  attachInterrupt(digitalPinToInterrupt(lightbarrier1), ISRLB1, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRLB2, CHANGE);
     DEBUG_PRINTLN("Arduino Initialise");
 }
 
@@ -58,14 +60,26 @@ void loop() {
 
 void ISRLB1() {
   DEBUG_PRINT("ISRLB1() - ");
- passingtimeLB1=micros(); //Auflösung auf 4 micros
-  DEBUG_PRINTLN(passingtimeLB1);
+  if(lightbarrier1){
+    passingtimeLB12=micros();
+    DEBUG_PRINTLN(passingtimeLB12);
+  }
+  else{
+    passingtimeLB1=micros(); //Auflösung auf 4 micros
+    DEBUG_PRINTLN(passingtimeLB1);
+  }
 }
 
 void ISRLB2() {
   DEBUG_PRINT("ISRLB2() - ");
- passingtimeLB2=micros();
-  DEBUG_PRINTLN(passingtimeLB2);
+  if(lightbarrier2){
+    passingtimeLB22=micros();
+    DEBUG_PRINTLN(passingtimeLB22);
+  }
+  else{
+    passingtimeLB2=micros(); //Auflösung auf 4 micros
+    DEBUG_PRINTLN(passingtimeLB2);
+  }
  LBinterrupted=true;
 }
 
