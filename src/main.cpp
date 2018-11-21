@@ -133,47 +133,10 @@ void ISRLB2() {
   }
 }
 
-// double calculate_velocity_ms(){
-//     DEBUG_PRINTLN("calculate_velocity_ms() ");
-//   long passedTimeinUS = passingtimeLB21-passingtimeLB11;
-//   double velocityms=0.0;
-//     // DEBUG_PRINT("passingtimeLB11: ");
-//     // DEBUG_PRINTLN(passingtimeLB11);
-//     // DEBUG_PRINT("passingtimeLB21: ");
-//     // DEBUG_PRINTLN(passingtimeLB21);
-//     // DEBUG_PRINT("passedTimeinUS: ");
-//     // DEBUG_PRINTLN(passedTimeinUS);
-//
-//   if (passedTimeinUS > 0 && (passingtimeLB11!=oldpassingtimeLB1) && (passingtimeLB21!=oldpassingtimeLB2)) {
-//       DEBUG_PRINT("Zeit [us]: ");
-//       DEBUG_PRINTLN(passedTimeinUS);
-//       DEBUG_PRINT("Zeit [s]: ");
-//       DEBUG_PRINTLN(passedTimeinUS/1000000.0);
-//     velocityms=sensordistance/passedTimeinUS;
-//       DEBUG_PRINT("Geschwindigkeit [m/s]: ");
-//       DEBUG_PRINTLN(velocityms);
-//   }
-//   else{
-//       DEBUG_PRINT("Error, Negativ Time or same passingtime: ");
-//       DEBUG_PRINTLN(passedTimeinUS);
-//     velocityms=0;
-//   }
-//   oldpassingtimeLB1=passingtimeLB11;
-//   oldpassingtimeLB2=passingtimeLB21;
-//   return velocityms;
-// }
 
 double calculate_velocity_ms(unsigned long duration,double distance){ //us,um
-    // DEBUG_PRINTLN("calculate_velocity_ms(unsigned long passingduration,double distance) ");
+    DEBUG_PRINTLN("calculate_velocity_ms(unsigned long passingduration,double distance) ");
   double velocityms=0.0;
-    // DEBUG_PRINT("Zeit [us]: ");
-    // DEBUG_PRINTLN(duration);
-    // DEBUG_PRINT("Zeit [s]: ");
-    // DEBUG_PRINTLN(duration/1000000.0);
-    // DEBUG_PRINT("Distanz [um]: ");
-    // DEBUG_PRINTLN(distance);
-    // DEBUG_PRINT("Distanz [m]: ");
-    // DEBUG_PRINTLN(distance/1000000.0);
   velocityms=distance/duration;
     DEBUG_PRINT("Geschwindigkeit [m/s]: ");
     DEBUG_PRINTLN(velocityms);
