@@ -1,4 +1,4 @@
-#define MYDEBUG
+// #define MYDEBUG
 #include "debug.h"
 #include <Arduino.h>
 
@@ -15,7 +15,7 @@ unsigned long passingdurationLB1 = 0;
 unsigned long passingdurationLB2 = 0;
 volatile bool LBinterrupted=false;
 
-const double sensordistance= 10.1*1000; //um
+const double sensordistance= 101.0*1000; //um
 const double ballwidth= 72.0*1000; //um -> 72mm
 
 //===========Pindefine===========
@@ -24,6 +24,7 @@ const double ballwidth= 72.0*1000; //um -> 72mm
 const byte lightbarrier1 = 2;
 const byte lightbarrier2 = 3;
 
+const bool active=false;
 //===========Functionprototype===========
 void ISRLB1();
 void ISRLB2();
@@ -37,32 +38,98 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(lightbarrier1), ISRLB1, CHANGE);
   attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRLB2, CHANGE);
     DEBUG_PRINTLN("Arduino Initialise");
+    if (!active){
+      Serial.println("");
+      Serial.print("Iter");
+      Serial.print("\t");
+      Serial.print("Bez");
+      Serial.print("\t");
+      Serial.print("Puls LS 1");
+      Serial.print("\t");
+      Serial.print("Puls LS 2");
+      Serial.print("\t");
+      Serial.print("Int LS 12");
+      Serial.print("\t");
+      Serial.print("Int LS 1");
+      Serial.print("\t");
+      Serial.print("Int LS 2");
+      Serial.print("\t");
+      Serial.print("Int LS 11-21");
+      Serial.print("\t");
+      Serial.print("Int LS 12-22");
+      Serial.println("\t");
+    }
 }
 
 void loop() {
-  // delay(500); //Update only once per Second
-  passingdurationLB1 = pulseIn(lightbarrier1, LOW,200);
-  passingdurationLB2 = pulseIn(lightbarrier2, LOW,200);
-  DEBUG_PRINTLN(calculate_velocity_ms(passingdurationLB1,ballwidth)*3.6);
-  DEBUG_PRINTLN(calculate_velocity_ms(passingdurationLB2,ballwidth)*3.6);
-  // velocityTracking.calculate_velocity_ms(passingdurationLB1)*3.6;
-  DEBUG_PRINTLN(calculate_velocity_ms(passingtimeLB12-passingtimeLB11,ballwidth)*3.6);
-  DEBUG_PRINTLN(calculate_velocity_ms(passingtimeLB22-passingtimeLB21,ballwidth)*3.6);
-  DEBUG_PRINTLN(calculate_velocity_ms(passingtimeLB21-passingtimeLB11,sensordistance)*3.6);
-  DEBUG_PRINTLN(calculate_velocity_ms(passingtimeLB22-passingtimeLB12,sensordistance)*3.6);
-
-  if (LBinterrupted){
-      LBinterrupted=false;
-
-      double velocitykmh=calculate_velocity_ms()*3.6;
-      if(velocitykmh!=0){
+  //delay(500); //Update only once per Second
+  if (!active) {
+    passingdurationLB1 = pulseIn(lightbarrier1, LOW);
+    DEBUG_PRINTLN(passingdurationLB1);
+    passingdurationLB2 = pulseIn(lightbarrier2, LOW);
+    DEBUG_PRINTLN(passingdurationLB2);
+    DEBUG_PRINTLN(calculate_velocity_ms(passingdurationLB1,ballwidth)*3.6);
+    DEBUG_PRINTLN(calculate_velocity_ms(passingdurationLB2,ballwidth)*3.6);
+    if(passingdurationLB1!=0 && passingdurationLB2!=0){
       countingvar+=1;
       Serial.print(countingvar);
       Serial.print("\t");
       Serial.print("Geschwindigkeit [km/h]:");
       Serial.print("\t");
-      Serial.println(velocitykmh);
+      Serial.print(calculate_velocity_ms(passingdurationLB1,ballwidth)*3.6);
+      Serial.print("\t");
+      Serial.print(calculate_velocity_ms(passingdurationLB2,ballwidth)*3.6);
+      Serial.print("\t");
     }
+    DEBUG_PRINTLN("===================================================");
+  }
+
+
+  // // velocityTracking.calculate_velocity_ms(passingdurationLB1)*3.6;
+  // DEBUG_PRINTLN(calculate_velocity_ms(passingtimeLB12-passingtimeLB11,ballwidth)*3.6);
+  // DEBUG_PRINTLN(calculate_velocity_ms(passingtimeLB22-passingtimeLB21,ballwidth)*3.6);
+  // DEBUG_PRINTLN(calculate_velocity_ms(passingtimeLB21-passingtimeLB11,sensordistance)*3.6);
+  // DEBUG_PRINTLN(calculate_velocity_ms(passingtimeLB22-passingtimeLB12,sensordistance)*3.6);
+
+  if (LBinterrupted){
+  // if (active){
+      LBinterrupted=false;
+
+      passingdurationLB1 = pulseIn(lightbarrier1, LOW);
+      DEBUG_PRINTLN(passingdurationLB1);
+      passingdurationLB2 = pulseIn(lightbarrier2, LOW);
+      DEBUG_PRINTLN(passingdurationLB2);
+      DEBUG_PRINTLN(calculate_velocity_ms(passingdurationLB1,ballwidth)*3.6);
+      DEBUG_PRINTLN(calculate_velocity_ms(passingdurationLB2,ballwidth)*3.6);
+      // velocityTracking.calculate_velocity_ms(passingdurationLB1)*3.6;
+      // DEBUG_PRINT("Geschwindigkeit [km/h]:");
+      // DEBUG_PRINTLN(calculate_velocity_ms(passingtimeLB12-passingtimeLB11,ballwidth)*3.6);
+      // DEBUG_PRINT("Geschwindigkeit [km/h]:");
+      // DEBUG_PRINTLN(calculate_velocity_ms(passingtimeLB22-passingtimeLB21,ballwidth)*3.6);
+      // DEBUG_PRINT("Geschwindigkeit [km/h]:");
+      // DEBUG_PRINTLN(calculate_velocity_ms(passingtimeLB21-passingtimeLB11,sensordistance)*3.6);
+      // DEBUG_PRINT("Geschwindigkeit [km/h]:");
+      // DEBUG_PRINTLN(calculate_velocity_ms(passingtimeLB22-passingtimeLB12,sensordistance)*3.6);
+
+      double velocitykmh=calculate_velocity_ms()*3.6;
+      if(velocitykmh!=0){
+      // countingvar+=1;
+      // Serial.print(countingvar);
+      // Serial.print("-");
+      // Serial.print("\t");
+      // Serial.print("Geschwindigkeit [km/h]:");
+      // Serial.print("\t");
+      Serial.print(velocitykmh);
+      Serial.print("\t");
+      Serial.print(calculate_velocity_ms(passingtimeLB12-passingtimeLB11,ballwidth)*3.6);
+      Serial.print("\t");
+      Serial.print(calculate_velocity_ms(passingtimeLB22-passingtimeLB21,ballwidth)*3.6);
+      Serial.print("\t");
+      Serial.print(calculate_velocity_ms(passingtimeLB21-passingtimeLB11,sensordistance)*3.6);
+      Serial.print("\t");
+      Serial.println(calculate_velocity_ms(passingtimeLB22-passingtimeLB12,sensordistance)*3.6);
+    }
+    DEBUG_PRINTLN("===================================================");
  }
 }
 
@@ -85,24 +152,24 @@ void ISRLB2() {
   if(digitalRead(lightbarrier2)){
     passingtimeLB22=passingtimeLB2;
     DEBUG_PRINTLN(passingtimeLB22);
+    LBinterrupted=true;
   }
   else{
     passingtimeLB21=passingtimeLB2; //Auflösung auf 4 micros
     DEBUG_PRINTLN(passingtimeLB21);
   }
- LBinterrupted=true;
 }
 
 double calculate_velocity_ms(){
     DEBUG_PRINTLN("calculate_velocity_ms() ");
   long passedTimeinUS = passingtimeLB21-passingtimeLB11;
   double velocityms=0.0;
-    DEBUG_PRINT("passingtimeLB11: ");
-    DEBUG_PRINTLN(passingtimeLB11);
-    DEBUG_PRINT("passingtimeLB21: ");
-    DEBUG_PRINTLN(passingtimeLB21);
-    DEBUG_PRINT("passedTimeinUS: ");
-    DEBUG_PRINTLN(passedTimeinUS);
+    // DEBUG_PRINT("passingtimeLB11: ");
+    // DEBUG_PRINTLN(passingtimeLB11);
+    // DEBUG_PRINT("passingtimeLB21: ");
+    // DEBUG_PRINTLN(passingtimeLB21);
+    // DEBUG_PRINT("passedTimeinUS: ");
+    // DEBUG_PRINTLN(passedTimeinUS);
 
   if (passedTimeinUS > 0 && (passingtimeLB11!=oldpassingtimeLB1) && (passingtimeLB21!=oldpassingtimeLB2)) {
       DEBUG_PRINT("Zeit [us]: ");
@@ -124,16 +191,16 @@ double calculate_velocity_ms(){
 }
 
 double calculate_velocity_ms(unsigned long duration,double distance){ //us,um
-    DEBUG_PRINTLN("calculate_velocity_ms(unsigned long passingduration,double distance) ");
+    // DEBUG_PRINTLN("calculate_velocity_ms(unsigned long passingduration,double distance) ");
   double velocityms=0.0;
-    DEBUG_PRINT("Zeit [us]: ");
-    DEBUG_PRINTLN(duration);
-    DEBUG_PRINT("Zeit [s]: ");
-    DEBUG_PRINTLN(duration/1000000.0);
-    DEBUG_PRINT("Distanz [um]: ");
-    DEBUG_PRINTLN(distance);
-    DEBUG_PRINT("Distanz [m]: ");
-    DEBUG_PRINTLN(distance/1000000.0);
+    // DEBUG_PRINT("Zeit [us]: ");
+    // DEBUG_PRINTLN(duration);
+    // DEBUG_PRINT("Zeit [s]: ");
+    // DEBUG_PRINTLN(duration/1000000.0);
+    // DEBUG_PRINT("Distanz [um]: ");
+    // DEBUG_PRINTLN(distance);
+    // DEBUG_PRINT("Distanz [m]: ");
+    // DEBUG_PRINTLN(distance/1000000.0);
   velocityms=distance/duration;
     DEBUG_PRINT("Geschwindigkeit [m/s]: ");
     DEBUG_PRINTLN(velocityms);
