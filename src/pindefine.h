@@ -9,8 +9,10 @@
 // const bool RIGHT = 1;
 // const bool LEFT = 0;
 
-#define lightbarrier1 (1)
-#define lightbarrier2 (15)
+//#define lightbarrier1 (1)
+const byte lightbarrier1 = 1;
+const byte lightbarrier2 = 2;
+// #define lightbarrier2 (15)
 
 
 

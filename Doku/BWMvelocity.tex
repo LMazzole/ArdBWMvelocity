@@ -1,0 +1,120 @@
+% Dokumentinformationen
+%Vorlage erstellt von Luca Mazzoleni aufbaudend auf der Vorlage von Stefan Reinli
+
+% !TeX program = pdflatex
+% !TeX encoding = utf8
+% !TeX spellcheck = de_DE
+% !BIB program = bibtex
+
+\documentclass[
+11pt,
+final,
+oneside,
+a4paper]{article}
+%%%%
+
+% Document information
+\newcommand*{\Title}            {Geschwindigkeitserfassung Ballwurfmaschiene}
+\newcommand*{\TitleInfo}        {Projektarbeit HS18}
+\newcommand*{\AuthorOne}		{Luca Mazzoleni}
+\newcommand*{\AuthorTwo}		{}
+\newcommand*{\Author}			{\AuthorOne}
+\newcommand*{\Prof}				{Markus Kottmann}
+\newcommand*{\Modul}			{Einf\"uherung Programmierung}
+\newcommand*{\Betreuer}			{Daniel Raillard}
+\newcommand*{\Place}            {Rapperswil}
+\newcommand*{\LogoHSR}          {\includegraphics[height = 1cm]{header/hsrlogo}}
+\newcommand*{\LogoCompany}      {}
+\newcommand*{\Print}            {false} % true for black links (print version), false for color links (pdf version)
+
+% Header
+\include{header/header}
+\include{header/codelayout}
+\setcounter{secnumdepth}{4}
+
+\usepackage{nicefrac}
+% tcolorbox setup
+\tcbset{width=(\linewidth-1mm)/2,before=,after=\hfill,arc=0mm,
+	colframe=red!50!black,colback=white,colback = red!10}
+
+\newcommand{\hsp}{\hspace{20pt}}
+\titleformat{\section}[hang]{\Huge\bfseries}{\thesection\hsp\textcolor{gray80}{|}\hsp}{0pt}{\Huge\bfseries}
+\titleformat{\subsection}[hang]{\huge\bfseries}{\thesubsection\hsp\textcolor{gray60}{|}\hsp}{0pt}{\Large\bfseries}
+\titleformat{\subsubsection}[hang]{\Large\bfseries}{\thesubsubsection\hsp\textcolor{gray40}{|}\hsp}{0pt}{\large\bfseries}
+\titleformat{\paragraph}[hang]{\large\bfseries}{\theparagraph\hsp\textcolor{gray20}{|}\hsp}{0pt}{\large\bfseries}
+
+% fontstyle
+%\renewcommand\familydefault{\sfdefault}    % Arial
+
+% Document
+\begin{document}
+        \pagenumbering{Roman}
+    \thispagestyle{empty}
+    \input{sections/titlepage}
+    \clearpage
+    \pagebreak
+%    \thispagestyle{empty}
+%    \listoftodos
+%    \cleardoublepage
+    \pagebreak
+    \pagenumbering{arabic}
+    \setcounter{page}{1}
+    \thispagestyle{empty}
+
+	
+%\newgeometry{left=2cm,right=4cm,top=1cm,bottom=1cm,headsep=1.5cm, marginparwidth=30mm,marginparsep=3mm,includeheadfoot}
+%	\thispagestyle{empty}
+%	\input{sections/Abstract}
+%	\clearpage
+%	\pagebreak
+
+\newgeometry{left=2cm,right=2cm,top=1cm,bottom=1cm,headsep=1.5cm, marginparwidth=1mm,marginparsep=3mm,includeheadfoot} %Seitenränder Dokument ohne Titelblatt und Abstract
+	\begin{spacing}{1}
+		\startcontents[sections]
+		\printcontents[sections]{l}{1}{\setcounter{tocdepth}{4}\section*{Inhaltsverzeichnis}}	
+	\end{spacing}
+	\cleardoublepage 
+	
+
+
+\newgeometry{left=2cm,right=4cm,top=1cm,bottom=1cm,headsep=1.5cm, marginparwidth=30mm,marginparsep=3mm,includeheadfoot}
+	\pagebreak
+	\input{sections/Aufgabenstellung}
+    \clearpage
+%    \cleardoublepage
+	\clearpage\pagebreak
+    \input{sections/Hardware}
+    \clearpage\pagebreak
+    \input{sections/Software}
+    \clearpage\pagebreak
+    \input{sections/Versuchsaufbau}
+    \clearpage\pagebreak
+    \input{sections/Auswertung}
+    \clearpage\pagebreak
+    \input{sections/Ausblick}
+    \clearpage\pagebreak
+%	\input{sections/Einleitung}
+%	\pagebreak
+%    \input{sections/Einleitung}
+%    \pagebreak
+%	\input{sections/Pflichtenheft}
+%    \pagebreak
+%    \input{sections/Pflichtenheft}
+%	\pagebreak
+%	\input{sections/Projektplan}
+%	\pagebreak
+%	\input{sections/Hauptstudie}
+%	\pagebreak
+%	\input{sections/Fazit}
+%	\pagebreak
+
+\newgeometry{left=2cm,right=2cm,top=1cm,bottom=1cm,headsep=1.5cm, marginparwidth=1mm,marginparsep=3mm,includeheadfoot}	
+%	\input{sections/Eigenstaendigkeitserklaerung}
+%	\pagebreak
+%	\input{sections/Verzeichnisse}
+%	\clearpage
+%	\pagebreak
+	\pagestyle{appendix}
+	\input{sections/Anhang}
+	\cleardoublepage
+\end{document}

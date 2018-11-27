@@ -1,0 +1,32 @@
+\section*{Anhang}
+\addcontentsline{toc}{section}{Anhang}
+\appendix
+\startcontents[sections]
+\printcontents[sections]{l}{1}{\setcounter{tocdepth}{2}}
+\clearpage
+\pagebreak
+
+
+%\includepdf[pages={1},scale=0.95, pagecommand={\section{Anhangbsp mit PDF}},offset=0 -2cm]{sections/anhang/BA.pdf}
+%\includepdf[pages={2-},scale=0.95, pagecommand={\thispagestyle{appendix}}]{sections/anhang/BA.pdf}
+
+\includepdf[pages={1},scale=0.85, pagecommand={\section{Datenblatt Panasonic EX-20}\label{app:ex20}},offset=0 -2cm]{sections/anhang/ex20_ger_man.pdf}
+\includepdf[pages={2-},scale=0.92, pagecommand={\thispagestyle{appendix}}]{sections/anhang/ex20_ger_man.pdf}
+
+
+\includepdf[pages={1},scale=0.95, pagecommand={\section{Berechnungen}\label{app:berechnung}},offset=0 -2cm]{sections/anhang/Berechnungen.pdf}
+\includepdf[pages={2-},scale=0.95, pagecommand={\thispagestyle{appendix}}]{sections/anhang/Berechnungen.pdf}
+
+\section{Arduinoprogramm}\label{app:ardprog}
+\lstinputlisting[style=customc++]{src/BWMvelocity.cpp}
+
+\section{Python}\label{app:python}
+\lstinputlisting[style=python]{src/ReadSerial.py}
+
+\section{Auswertung}\label{app:Auswertung}
+\includegraphics[width=\textwidth]{images/auswertungLS1.png}\\
+\includegraphics[width=\textwidth]{images/auswertungLS2.png}\\
+\includegraphics[width=\textwidth]{images/auswertungLS1LS2.png}\\
+\includegraphics[width=\textwidth]{images/auswertungInt.png}\\
+
+\includegraphics[width=\textwidth]{images/auswertungSpeed.png}\\
