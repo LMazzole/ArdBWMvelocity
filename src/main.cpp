@@ -1,8 +1,8 @@
 
 #include <Arduino.h>
-#define MYDEBUG
-#define MYLOG
-#define USEINTERRUPT(FALSE)
+// #define MYDEBUG
+// #define MYLOG
+#define USEINTERRUPT
 
 //Define Debug-Function
 #ifdef MYDEBUG
@@ -17,13 +17,13 @@
 
 //Define Log-Function for Phyton-Script
 #ifdef MYLOG
- #define LOG_PRINT(x)        Serial.print (x)
- #define LOG_PRINTDEC(x)     Serial.print (x, DEC)
- #define LOG_PRINTLN(x)      Serial.println (x)
+  #define LOG_PRINT(x)        Serial.print (x)
+  #define LOG_PRINTDEC(x)     Serial.print (x, DEC)
+  #define LOG_PRINTLN(x)      Serial.println (x)
 #else
- #define LOG_PRINT(x)
- #define LOG_PRINTDEC(x)
- #define LOG_PRINTLN(x)
+  #define LOG_PRINT(x)
+  #define LOG_PRINTDEC(x)
+  #define LOG_PRINTLN(x)
 #endif
 
 //===========Global Variabel===========
@@ -34,7 +34,7 @@ double velocitykmh[4];
 unsigned long passingtime[4];
 int countingvar = 0;
 
-#if USEINTERRUPT
+#ifdef USEINTERRUPT
   volatile unsigned long passingtimeLB1 = 0;
   volatile unsigned long passingtimeLB11 = 0;
   volatile unsigned long passingtimeLB12 = 0;
@@ -54,42 +54,37 @@ const byte lightbarrier2 = 3;
 
 //===========Functionprototype===========
 double calculate_velocity_ms(unsigned long passingduration,double distance);
-#if USEINTERRUPT
+void printlog(double speedinkmh[4]);
+#ifdef USEINTERRUPT
   void ISRLB1();
   void ISRLB2();
 #endif
 
 void setup() {
   Serial.begin(9600);                // Set serial monitor baud rate
-  #if USEINTERRUPT
+  #ifdef USEINTERRUPT
     attachInterrupt(digitalPinToInterrupt(lightbarrier1), ISRLB1, CHANGE);
     attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRLB2, CHANGE);
   #endif
 
   DEBUG_PRINTLN("Arduino Initialise");
   LOG_PRINTLN("");
-  LOG_PRINT("Iter");
-  LOG_PRINT("\t");
-  LOG_PRINT("Bez");
-  LOG_PRINT("\t");
-  #if USEINTERRUPT
-    LOG_PRINT("Int LS 1");
-    LOG_PRINT("\t");
-    LOG_PRINT("Int LS 2");
-    LOG_PRINT("\t");
-    LOG_PRINT("Int LS 11-21");
-    LOG_PRINT("\t");
+  LOG_PRINT("Iter"); LOG_PRINT("\t");
+  LOG_PRINT("Bez"); LOG_PRINT("\t");
+  #ifdef USEINTERRUPT
+    LOG_PRINT("Int LS 1"); LOG_PRINT("\t");
+    LOG_PRINT("Int LS 2"); LOG_PRINT("\t");
+    LOG_PRINT("Int LS 11-21"); LOG_PRINT("\t");
     LOG_PRINT("Int LS 12-22");
   #else
-    LOG_PRINT("Puls LS 1");
-    LOG_PRINT("\t");
+    LOG_PRINT("Puls LS 1"); LOG_PRINT("\t");
     LOG_PRINT("Puls LS 2");
   #endif
   LOG_PRINTLN("");
 }
 
 void loop() {
-  #if USEINTERRUPT
+  #ifdef USEINTERRUPT
     if (LBinterrupted){
       LBinterrupted=false;
       noInterrupts();
@@ -102,40 +97,28 @@ void loop() {
        velocitykmh[1]=calculate_velocity_ms(passingtime[3]-passingtime[2],ballwidth)*3.6;
        velocitykmh[2]=calculate_velocity_ms(passingtime[2]-passingtime[0],sensordistance)*3.6;
        velocitykmh[3]=calculate_velocity_ms(passingtime[3]-passingtime[1],sensordistance)*3.6;
+       printlog(velocitykmh);
      }
   #else
-     passingdurationLB1 = pulseIn(lightbarrier1, LOW,500);
+     passingdurationLB1 = pulseIn(lightbarrier1, LOW);
         DEBUG_PRINTLN("passingdurationLB1: ");
         DEBUG_PRINTLN(passingdurationLB1);
         if(passingdurationLB1!=0){
-          passingdurationLB2 = pulseIn(lightbarrier2, LOW);
+          passingdurationLB2 = pulseIn(lightbarrier2, LOW,500000);
              DEBUG_PRINTLN("passingdurationLB2: ");
              DEBUG_PRINTLN(passingdurationLB2);
-          passingtime[0]=passingdurationLB1;
-          passingtime[1]=passingdurationLB2;
-          velocitykmh[0]=calculate_velocity_ms(passingtime[0],ballwidth)*3.6;
-          velocitykmh[1]=calculate_velocity_ms(passingtime[1],ballwidth)*3.6;
+          if(passingdurationLB2!=0){
+            passingtime[0]=passingdurationLB1;
+            passingtime[1]=passingdurationLB2;
+            velocitykmh[0]=calculate_velocity_ms(passingtime[0],ballwidth)*3.6;
+            velocitykmh[1]=calculate_velocity_ms(passingtime[1],ballwidth)*3.6;
+            printlog(velocitykmh);
+          }
+          passingdurationLB1 = 0;
+          passingdurationLB2 = 0;
         }
    #endif
-
-   //TODO Write in Function
-   countingvar+=1;
-   LOG_PRINT(countingvar);
-   LOG_PRINT("\t");
-   LOG_PRINT("Geschwindigkeit [km/h]:");
-   LOG_PRINT("\t");
-   LOG_PRINT(velocitykmh[0]);
-   LOG_PRINT("\t");
-   LOG_PRINT(velocitykmh[1]);
-   #if USEINTERRUPT
-     LOG_PRINT("\t");
-     LOG_PRINT(velocitykmh[2]);
-     LOG_PRINT("\t");
-     LOG_PRINT(velocitykmh[3]);
-   #endif
-   LOG_PRINTLN("");
- DEBUG_PRINTLN("===================================================");
-
+ DEBUG_PRINTLN("===================END-LOOP==============================");
 }
 
 double calculate_velocity_ms(unsigned long duration,double distance){ //us,um
@@ -147,7 +130,24 @@ double calculate_velocity_ms(unsigned long duration,double distance){ //us,um
   return velocityms;
 }
 
-#if USEINTERRUPT
+void printlog(double speedinkmh[4]){
+    DEBUG_PRINTLN("printlog(double speedinkmh[4])");
+  #ifdef MYLOG
+    countingvar+=1;
+    Serial.print(countingvar); Serial.print("\t");
+    Serial.print("Geschwindigkeit [km/h]:"); Serial.print("\t");
+    Serial.print(velocitykmh[0]); Serial.print("\t");
+    Serial.print(velocitykmh[1]);
+    #ifdef USEINTERRUPT
+      Serial.print("\t");
+      Serial.print(velocitykmh[2]); Serial.print("\t");
+      Serial.print(velocitykmh[3]);
+    #endif
+    Serial.println("");
+  #endif
+}
+
+#ifdef USEINTERRUPT
   void ISRLB1() {
       DEBUG_PRINT("ISRLB1() - ");
     passingtimeLB1=micros(); //Auflösung auf 4 micros
