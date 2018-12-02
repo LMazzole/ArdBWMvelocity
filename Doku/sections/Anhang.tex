@@ -15,7 +15,12 @@
 
 
 \includepdf[pages={1},scale=0.95, pagecommand={\section{Berechnungen}\label{app:berechnung}},offset=0 -2cm]{sections/anhang/Berechnungen.pdf}
-\includepdf[pages={2-},scale=0.95, pagecommand={\thispagestyle{appendix}}]{sections/anhang/Berechnungen.pdf}
+\includepdf[pages={2,3},scale=0.95, pagecommand={\thispagestyle{appendix}}]{sections/anhang/Berechnungen.pdf}
+
+\includepdf[pages={4},scale=0.95,
+pagecommand={Für die Geschwindigkeit wird die Formel $\nicefrac{Umfang \cdot RPM}{60}$ angewendet. Die min/max Geschwindigkeit ergibt sich aus der Durchgangszeit $\pm$ des max. Sensorfehlers.
+    \thispagestyle{appendix}},offset=0 -1.5cm]{sections/anhang/Berechnungen.pdf}
+\includepdf[pages={5-},scale=0.95, pagecommand={\thispagestyle{appendix}}]{sections/anhang/Berechnungen.pdf}
 
 \section{Arduinoprogramm}\label{app:ardprog}
 \lstinputlisting[style=customc++]{src/BWMvelocity.cpp}
@@ -27,6 +32,7 @@
 \includegraphics[width=\textwidth]{images/auswertungLS1.png}\\
 \includegraphics[width=\textwidth]{images/auswertungLS2.png}\\
 \includegraphics[width=\textwidth]{images/auswertungLS1LS2.png}\\
-\includegraphics[width=\textwidth]{images/auswertungInt.png}\\
+\includegraphics[width=\textwidth]{images/auswertungInt.png}\\\
 
+\includegraphics[width=\textwidth]{images/auswertungSpeedUeb.png}\\
 \includegraphics[width=\textwidth]{images/auswertungSpeed.png}\\

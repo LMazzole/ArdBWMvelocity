@@ -1,5 +1,6 @@
 \section{Auswertung}
-Mit dem Aufbau ist es möglich Geschwindigkeiten bis zu 200 $\nicefrac{km}{h}$ zu generieren. Wie \ref{fig:AuswertungSpeed} zeigt, nimmt der Fehler zu, je höher die Geschwindigkeit ist. Dieses Verhalten zeigt auch \ref{fig:AuswertungZeitfehler}. Der gemessene \marg{Fehler} Fehler liegt jedoch unter 6\%.\\
+Mit dem Aufbau ist es möglich Geschwindigkeiten über 200 $\nicefrac{km}{h}$ zu erzeugen.
+
 \begin{figure}[ht]
     \centering
     %    \missingfigure{Bild einfügen}
@@ -8,7 +9,35 @@ Mit dem Aufbau ist es möglich Geschwindigkeiten bis zu 200 $\nicefrac{km}{h}$ z
     \label{fig:AuswertungSpeed}
 \end{figure}
 
-In \ref{fig:AuswertungInt} \marg{Vergleich Polling - Interrupt} werden die verschiedene Implementationsmethoden verglichen.
+In \ref{fig:AuswertungSpeed} werden die verschiedenen gemessenen Geschwindigkeit abhängig von der Drehzahl dargestellt.
+Erwartet sind folgende Geschwindigkeiten:
+\begin{center}
+    \begin{tabular}{rr}
+        \textbf{RPM}&\textbf{Geschwindigkeit $\left[\nicefrac{km}{h}\right]$}\\ \hline
+        100&9.4\\
+        500&47.1\\
+        750&70.7\\
+        1000&94.2\\
+        1250&117.8\\
+        1500&141.4\\
+        1750&164.9\\
+        2000&188.5\\
+    \end{tabular}
+\end{center}
+ Wie \ref{fig:AuswertungInt} zeigt, nimmt die Präzision mit höherer Geschwindigkeit immer weiter ab während die Genuigkeit etwa gleich bleibt (vgl. \ref{fig:GenauPraz}). 
+% Dieses Verhalten zeigt auch \ref{fig:AuswertungZeitfehler}.
+
+\begin{figure}[ht]
+    \centering
+    %    \missingfigure{Bild einfügen}
+    \includegraphics[width=0.7\textwidth]{images/testingtips}
+    \caption{Genauigkeit und Präzision}
+    \label{fig:GenauPraz}
+\end{figure}
+\clearpage
+
+In \ref{fig:AuswertungInt} \marg{Vergleich Polling - Interrupt} werden die verschiedene Implementationsmethoden verglichen.\\
+
 Die Daten für Puls LS1 und Puls LS2 wurden durch Polling gewonnen während die restlichen durch Interrupts generiert wurden. Detailliertere Grafiken dazu finden sich in Anhang \ref{app:Auswertung}.
 \begin{figure}[ht]
     \centering
@@ -18,9 +47,51 @@ Die Daten für Puls LS1 und Puls LS2 wurden durch Polling gewonnen während die 
     \label{fig:AuswertungInt}
 \end{figure}
 
+
+Bei 2000RPM wurden in beiden Modi jeweils 500 Sample aufgezeichnet und ausgewertet. Dabei wurde eine Präzision von unter 8\% und eine Genauigkeit von unter 5\% erreicht.\\
+Die Dichtverteilung in \ref{fig:density} wurde mit einer Normalverteilung angenähert.
+
+
+\begin{figure}[ht]
+    \centering
+    %    \missingfigure{Bild einfügen}
+    \includegraphics[width=\textwidth]{images/hist.png}
+    \caption{Histogramm}
+    \label{fig:Hist}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    %    \missingfigure{Bild einfügen}
+    \includegraphics[width=\textwidth]{images/densi.png}
+    \caption{Dichteverteilung}
+    \label{fig:density}
+\end{figure}
+Berechnung Genauigkeit [\%]:
+\[ \frac{|Geschwindigkeit - Mittelwert\;der \; Samples|}{Geschwindigkeit}\cdot 100 \]
+%genau_data=abs(speed-mean_data);
+%genau_data_proz=genau_data/speed*100;
+%
+Berechnung Präzision [\%]:
+\[ max\left(\frac{|Mittelwert \; der \; Samples-Wert\;  der\; Samples|}{Geschwindigkeit}\cdot 100\right) \]
+%prez_data=abs(mean_data-data);
+%prez_data_proz=prez_data/speed*100;
+\begin{tabular}{lccc}
+	\textbf{Mode} & \textbf{Messung} & \textbf{Genauigkeit [\%]} & \textbf{Präzision [\%]} \\ \hline
+	Polling       &       LB1        & 4.9                       & 4.7                     \\
+	              &       LB2        & 3.8                       & 4.3                     \\
+	Interrupt     &   LB11 - LB12    & 3.5                       & 7.4                     \\
+	              &   LB21 - LB22    & 2.4                       & 3.7                     \\
+	              &   LB11 - LB21    & 3.4                       & 5.7                     \\
+	              &   LB12 - LB22    & 2.6                       & 3.6
+\end{tabular}
+
+
+
 \clearpage
 \subsection{Fehlerquellen}
-Die \ref{fig:AuswertungZeitfehler} zeigt den maximalen Geschwindigkeitsfehler wenn mit der maximalen Ansprechzeit der Lichtschranke von 0.5ms gerechnet wird.
+Die \ref{fig:AuswertungZeitfehler} zeigt den maximalen Geschwindigkeitsfehler wenn mit der maximalen Ansprechzeit der Lichtschranke von 0.5ms gerechnet wird. Diese Abbildung soll vor allem verdeutlichen, dass Fehler bei hohen Geschwindigkeiten stärker Gewichtet werden.
+
 \begin{figure}[ht]
     \centering
     %    \missingfigure{Bild einfügen}
@@ -29,11 +100,24 @@ Die \ref{fig:AuswertungZeitfehler} zeigt den maximalen Geschwindigkeitsfehler we
     \label{fig:AuswertungZeitfehler}
 \end{figure}
 
-Die für diesen Versuchsaufbau relevanten \marg{Fehlerquellen}Fehlerquellen sind:
+Die für diesen Versuchsaufbau relevanten \marg{Fehlerquellen}Fehlerquellen sind im Polling-Modus:
 \begin{itemize}
-    \item Ungenauer Abstand der Lichtschranken zueinander.
     \item Ungenauer Abstand der Lichtschranken zum Drehpunkt des Rotors.
-    \item Ungenauigkeit infolge der Reaktionszeit der Lichtschranke.
+    \item Ungenauigkeit infolge unterschiedlicher Reaktionszeiten der Lichtschranke.
+    \begin{itemize}
+        \item Wiederholpräzision
+        \item Hysterese
+    \end{itemize}
     \item Ungenauigkeit infolge Regelabweichung des Motors.
     \item Ungenauigkeit infolge der Reaktionszeit des Arduinos.
 \end{itemize}
+
+Beim Interrupt-Modus kommt wegen dem Vergleich zwischen den Lichtschranken noch weitere Ungenauigkeiten dazu:
+\begin{itemize}
+    \item Ungenauer Abstand der Lichtschranken zueinander.
+\end{itemize}
+
+Die Ungenauigkeit infolge unterschiedlicher Reaktionszeiten kann evt. mit dem Aufsetzen einer Schlitzmaske, welche es als Zubehör gibt, auf kosten der Reichweite, noch verbessert werden. \\
+\\
+
+
