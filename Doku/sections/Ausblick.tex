@@ -1,8 +1,12 @@
 \part{Fazit}
 \section{Empfehlung}
 Einige Fehler könnten mit einem genaueren Messaufbau eliminiert werden.
-Die Genauigkeit von 5\% sowie eine Präzision von 8\% ist in den Augen des Verfassers ausreichend. Eine Verbesserung kann erzielt werden wenn die momentane Ausführung mit 2 Sensoren beibehalten wird und die erfassten Messwerte noch weiterverarbeitet werden. Vorstellbar wäre dabei die Bildung eines Medians um Ausreisser zu minimieren.\\
+Die Genauigkeit von 5\% sowie eine Präzision von 2\% ist in den Augen des Verfassers ausreichend. Eine Verbesserung kann erzielt werden wenn die momentane Ausführung mit 2 Sensoren beibehalten wird und die erfassten Messwerte noch weiterverarbeitet werden. Vorstellbar wäre dabei die Bildung eines Medians um Ausreisser zu minimieren.\\
 
 Jedoch zeigte der Vergleich der Implementationsmethoden, dass auch nur eine Lichtschranke ausreichend sein kann. Es empfiehlt sich, dies weiter zu untersuchen.\\
 
 Für die genauere Identifikation der Fehlerquellen sind jedoch weitere Abklärungen und Experimente nötig.\\
+
+Der Verfasser empfiehlt die Nutzung des Interrupt-Modes, da er die bessere Präzision und Genauigkeit aufweist. Ausserdem erlaubt der Interrupt-Modus das Ausführen anderer Programme bis ein Event auftritt, während im Polling-Modus aktiv gewartet werden muss.\\
+
+Weiter könnte der Code in ein Definitions- (*.cpp) und Deklarations-File(*.h) aufgeteilt werden. So kann er einfacher in bestehende Programme integriert werden.

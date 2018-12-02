@@ -1,5 +1,5 @@
 \part{Software}
-Softwareseitig wurde mit dem Plugin \href{https://platformio.org/platformio-ide}{PlatformIO} für Atom und der IDE \href{https://www.spyder-ide.org}{Spyder} für Python gearbeitet. Zur Versionierung wird \href{https://git-scm.com/}{Git} verwendet.
+Softwareseitig wurde mit dem Plugin \href{https://platformio.org/platformio-ide}{PlatformIO} für Atom die Programmierung des Arduinos erstellt. Für Python wurde die \href{https://www.spyder-ide.org}{Spyder} IDE verwendet. Zur Versionierung wird \href{https://git-scm.com/}{Git} verwendet. Die Auswertung der Daten erfolgt mit Matlab und Excel.
 \section{Programm}
 Das Programm \textit{BWMvelocity.cpp} welches man in Anhang \ref{app:ardprog} findet, ermöglicht es mit Hilfe von Polling oder Interrupts die Unterbuchtszeiten der Lichtschranke zu erfassen und so auf Grund der Grösse des unterbrechenden Objekts oder auf Grund des Abstands der Lichtschranken auf die Geschwindigkeit zu schliessen.
 
@@ -33,14 +33,15 @@ Ein Druchlauf \marg{Sensor-Signale} eines Objektes erzeugt dabei die in \ref{fig
 \clearpage
 \subsection{Modi}
 %\subsubsection{Preprocessor-Direktiven}
-Mit\marg{Preprocessor} Hilfe der \#define Anweisung können 3 verschiedene Modis ausgewählt werden. Dafür müssen die entsprechenden Befehle ein-kommentiert werden.\\
+Mit\marg{Preprocessor} Hilfe der \#define Anweisung können drei verschiedene Modi ausgewählt werden. Dafür müssen die entsprechenden Befehle ein-kommentiert werden.\\
 
 \begin{tabular}{L{0.3\linewidth} L{0.6\linewidth}}
     \#define MYDEBUG & Aktiviert den Debuggmodus und somit die \textit{DEBUG\_PRINT}-Funktionen.\\
     \#define MYLOG & Aktiviert den Datenloggingmodus und somit die \textit{LOG\_PRINT}-Funktionen.\\
     \#define USEINTERRUPT & Aktiviert den Interruptmodus und deaktiviert den Pollingmodus.\\
-\end{tabular}
+\end{tabular}\\
 
+Der Debugg- und Logging-Modus ist nur für die Auswertung und/oder Fehlersuche über die serielle Schnittstelle relevant. Im Normalbetrieb (Polling- oder Interrupt-Modus) können sie auskommentiert bleiben.
 \subsection{Globale Variabeln}
 Es \marg{globale Variabeln} gibt folgende globale Variabeln:
 \begin{itemize}
@@ -48,11 +49,11 @@ Es \marg{globale Variabeln} gibt folgende globale Variabeln:
     \item const double ballwidth = 72.0*1000
     \item unsigned long passingtime[4]
     \item double velocitykmh[4]
-    \item int coubtingvar
+    \item int countingvar
 \end{itemize}
 
 \textit{sensordistance} und \textit{ballwidth} beschreiben die geometrischen Randbedingungen in $\mu m$.\\
-\textit{passingtime} beinhaltet die Zeitstempel in $\mu s$ und \textit{velocitykmh} beinhlatet die gemessenen Geschwindigkeiten in $\nicefrac{km}{h}$.\\
+\textit{passingtime} beinhaltet die Zeitstempel in $\mu s$ und \textit{velocitykmh} beinhaltet die gemessenen Geschwindigkeiten in $\nicefrac{km}{h}$.\\
 Bei \textit{countigvar} handelt es sich um eine Lauf-variabel zur Indexierung der SerialPrint-Ausgaben.
 
 
@@ -67,7 +68,7 @@ Sie giebt eine Geschwindigkeit mit Hilfe der \ref{eq:Geschwindigkeit} in $\nicef
 
 
 \subsubsection{printlog()}
-Wenn der Datenloggingmodus aktiv ist printet die Funktion in die serielle Schnittstelle.
+Wenn der Datenlogging-Modus aktiv ist printet die Funktion in die serielle Schnittstelle.\\
 Im Pollingmodus:\\
 \begin{tabular}{llll}
     Iteration&Bezeichnung& Puls LB1 & Puls LB2\\
@@ -80,14 +81,15 @@ Im Interruptmodus:\\
 
 \clearpage
 \subsection{Polling-Modus}\label{subsec:polling}
-Im \marg{Polling} Pollingmodus wird mit der Funktion \textit{\href{https://www.arduino.cc/reference/en/language/functions/advanced-io/pulsein/}{pulseIn(pin, value, timeout)}} die Länge des Unterbruches in $\mu S$ angegegeben. Die minimale dedektierbare Pulslänge ist dabei 10 $\mu S$.
-Es werden folgende Zeiten erfasst und im Array \textit{passingtime} abgelegt:\\
-\begin{tabular}{cll}
-    \textbf{Index}&\textbf{Zeit [$\mu S$]} & \textbf{relevante Distanz} \\
-    0&Pulse LB1 & Objektgrösse\\
-    1&Pulse LB2 & Objektgrösse\\
-\end{tabular}\\
-
+Im \marg{Polling} Polling-Modus wird mit der Funktion \textit{\href{https://www.arduino.cc/reference/en/language/functions/advanced-io/pulsein/}{pulseIn(pin, value, timeout)}} die Länge des Unterbruches in $\mu S$ angegegeben. Die minimale dedektierbare Pulslänge ist dabei 10 $\mu S$.
+Es werden folgende Zeiten erfasst und im Array \textit{passingtime} abgelegt:
+\begin{center}
+    \begin{tabular}{cll}
+        \textbf{Index}&\textbf{Zeit [$\mu S$]} & \textbf{relevante Distanz} \\
+        0&Pulse LB1 & Objektgrösse\\
+        1&Pulse LB2 & Objektgrösse\\
+    \end{tabular}\\
+\end{center}
 Die Werte im Index 2 und 3 sind im Pollingmodus immer 0.\\
 
 Mit der Funktion \textit{calculate\_velocity\_ms()}(Abschnitt \ref{subsubsec:calcvel}) kann die Geschwindigkeit in $\nicefrac{m}{s}$ berechnet werden. Danach wird das Resultat mit dem Faktor 3.6 multipliziert und im Array \textit{velocitykmh} abgelegt.\\
@@ -96,31 +98,33 @@ Die Werte im Index 2 und 3 sind im Pollingmodus immer 0.\\
 
 
 \subsection{Interrupt-Modus} \label{subsec:interrupt}
-Im \marg{Interrupt}Interruptmodus wird bei jedem Flankenwechsel ein Interrupt ausgelöst und ein Zeitstempel in $\mu S$ gespeichert.\\
-\textbf{Beim Arduino UNO müssen die Lichtschranken dafür zwingend auf Pin 2 und 3 angeschlossen sein. Weiter muss zuerst die Lichtschranke 1 danach Lichtschranke 2 ausgelöst werden.}\\
+Im \marg{Interrupt}Interrupt-Modus wird bei jedem Flankenwechsel ein Interrupt ausgelöst und ein Zeitstempel in $\mu S$ gespeichert.\\
+\textbf{Beim Arduino UNO müssen die Lichtschranken dafür zwingend auf Pin 2 und 3 angeschlossen sein. Weiter muss zuerst die Lichtschranke 1 danach Lichtschranke 2 ausgelöst werden.} Dies liegt daran, dass beim Durchlauf von LB22 das Flag \textit{LBinterrupted} gesetzt wird. Werden die Lichtschranken vertauscht, erfolgt die Auslösung an der Position LB12 (vgl. \ref{fig:ArdSigs})\\
 Dies ergibt gesamt 4 Messwerte für LB11, LB12, LB21 und LB22 wie in \ref{fig:ArdSigs} gezeigt. Diese werden im Array \textit{passingtime} gespeichert.\\
 
-Das Array \textit{passingtime} beinhaltet also im Interruptmodus die folgenden Einträge:\\
-\begin{tabular}{cl}
-    \textbf{Index}&\textbf{Zeit [$\mu S$]} \\
-    0&LB11 \\
-    1&LB12 \\
-    2&LB21 \\
-    3&LB22 \\
-\end{tabular}\\
-
-Mit der Funktion \textit{calculate\_velocity\_ms()}(\ref{subsubsec:calcvel}) kann die Geschwindigkeit in $\nicefrac{m}{s}$ berechnet werden. Danach wird das Resultat mit dem Faktor 3.6 multipliziert und im Array \textit{velocitykmh} abgelegt.\\
-
-\begin{tabular}{cll}
-    \textbf{Index}&\textbf{Zeit [$\mu S$]} & \textbf{relevante Distanz [$\mu m$]} \\
-    0&LB12 - LB11 & Objektgrösse\\
-    1&LB22 - LB21 & Objektgrösse\\
-    2&LB21 - LB11 & Sensorabstand\\
-    3&LB22 - LB12 & Sensorabstand\\
-\end{tabular}\\
-
+Das Array \textit{passingtime} beinhaltet also im Interruptmodus die folgenden Einträge:
+\begin{center}
+    \begin{tabular}{cl}
+        \textbf{Index}&\textbf{Zeit [$\mu S$]} \\
+        0&LB11 \\
+        1&LB12 \\
+        2&LB21 \\
+        3&LB22 \\
+    \end{tabular}\\
+\end{center}
+Mit der Funktion \textit{calculate\_velocity\_ms()}(\ref{subsubsec:calcvel}) kann die Geschwindigkeit in $\nicefrac{m}{s}$ berechnet werden. Danach wird das Resultat mit dem Faktor 3.6 multipliziert und im Array \textit{velocitykmh} abgelegt.
+\begin{center}
+    \begin{tabular}{cll}
+        \textbf{Index}&\textbf{Zeit [$\mu S$]} & \textbf{relevante Distanz [$\mu m$]} \\
+        0&LB12 - LB11 & Objektgrösse\\
+        1&LB22 - LB21 & Objektgrösse\\
+        2&LB21 - LB11 & Sensorabstand\\
+        3&LB22 - LB12 & Sensorabstand\\
+    \end{tabular}\\
+\end{center}
 \subsubsection{Hilfsfunktionen}
-Der Interruptmodus benötigt noch weitere Hilfsfunktionen, nämlich die Interrupt-Service-Routine. Weiter wird noch das Flag \marg{Interrupt-Flag} \textit{LBinterrupted} benötigt, welches auf True wechselt, sobald das Objekt den Punkt LB22 durchlaufen hat.
+Der Interruptmodus benötigt noch weitere Hilfsfunktionen, nämlich die Interrupt-Service-Routine. Weiter wird noch das Flag \marg{Interrupt-Flag} \textit{LBinterrupted} benötigt, welches auf True wechselt, sobald das Objekt den Punkt LB22 durchlaufen hat.\\
+
 
 \paragraph{ISRLB1()}
 Diese Funktion ist die Interrupt-Service-Routine für die Lichtschranke LB1. Sie erkennt den Signalwechsel und schreibt den aktuellen Zeitstempel LB11 oder LB12 je nach dem ob das Signal HIGH oder LOW ist. Weiter wird das Flag \textit{LBinterrupted} auf False gesetzt.\\
@@ -128,6 +132,7 @@ Diese Funktion ist die Interrupt-Service-Routine für die Lichtschranke LB1. Sie
 
 \paragraph{ISRLB2()}
 Diese Funktion ist die Interrupt-Service-Routine für die Lichtschranke LB1. Sie erkennt den Signalwechsel und schreibt den aktuellen Zeitstempel LB11 oder LB12 je nach dem ob das Signal HIGH oder LOW ist. Bei LB21 wird das Flag \textit{LBinterrupted} auf False gesetzt. Bei LB22 auf True.\\
+
 
 %
 %Der \marg{Funktionen} Code besitzt folgende Funktionen:
@@ -152,22 +157,30 @@ Diese Funktion ist die Interrupt-Service-Routine für die Lichtschranke LB1. Sie
 %
 %Das Array \textit{velocitykmh} beinhaltet die berechneten Geschwindigkeit korresponidrenden zu den Zeiten und Distanzen aus dem passingtime-Array.\\
 %Im Pollingmodus sind die Werte bei  Index 2 und 3 jeweils 0.
+\subsection{Hauptfunktionen}
+\subsubsection{setup()}
+Die \textit{setup()}-Funktion läuft nur ein mal beim Einschalten oder dem Reset des Arduinos durch. Sie initialisiert die serielle Kommunikation und erstellt die Interrupt-Zuweisung der Pins im Interrupt-Modus. Ausserdem erstellt sie die erste Zeile des Log-Files im Logging-Modus.\\
 
 
+\subsubsection{loop()}
+Die \textit{loop()}-Funktion wird nach der \textit{setup()}-Funktion dauernd ausgeführt. In ihr läuft das Hauptprogramm. Je nach aktivem Modus entweder im Polling- oder im Interrupt-Modus.
 
-
+\clearpage
 
 \section{Python}
 Das Pythonskript aus Anhang \ref{app:python} dient dazu, die gesendeten Daten über den Serialport auszulesen und in einem .txt File abzuspeichern. Dies erleichtert die Datenanalyse mit Excel oder Matlab. Eine direkte Auswertung in Phyton wäre ebenfalls möglich.\\
 
+
 \subsection{Randbedingungen}
 Die Baudrate im Python-Sktipt (Zeile 29) muss die selbe sein wie im Arduino-Code angegeben.\\
-Der COM-Port sollte unter Windows automatisch gefunden werden. Ist dies nicht der Fall müssen die Zeilen 31 bis 38 angepasst werden. Das Argument \textit{serial\_port} kann dabei einfach mit dem gewünschten Port ersetzt werden.
+Der COM-Port sollte unter Windows automatisch gefunden werden. Ist dies nicht der Fall müssen die Zeilen 31 bis 38 angepasst werden. Das Argument \textit{serial\_port} kann dabei einfach mit dem gewünschten Port ersetzt werden.\\
+
 
 \subsection{Messdaten}
-Der Name des Ausgabefiles kann in Zeile 48 beliebig angepasst werden.
+Der Name des Ausgabefiles kann in Zeile 48 beliebig angepasst werden.\\
+
 
 \subsection{Ablauf}
-Wird das Skript gestartet erstellt es ein \*.txt-File und schreibt eine Kopfzeile.
-Danach wird alle,s was über den gewählten Serialport empfangen wird in dieses .txt-File gespeichert.\\
-Sobald ein KeyboardInterrupt erzeigt wird, beispielsweise mit Ctrl + C oder dem Abbruch-Knopf wird das File gespeichert und das Skript beendet.
+Wird das Skript gestartet erstellt es ein *.txt-File und schreibt eine Kopfzeile.
+Danach wird alles, was über den gewählten Serialport empfangen wird in dieses .txt-File gespeichert.\\
+Sobald ein \textit{KeyboardInterrupt} erzeugt wird, beispielsweise mit Ctrl + C oder dem Abbruch-Knopf wird das File gespeichert und das Skript beendet.
