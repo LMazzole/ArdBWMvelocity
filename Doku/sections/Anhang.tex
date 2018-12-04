@@ -24,15 +24,27 @@ pagecommand={Für die Geschwindigkeit wird die Formel $\nicefrac{Umfang \cdot RP
 
 \section{Arduinoprogramm}\label{app:ardprog}
 \lstinputlisting[style=customc++]{src/BWMvelocity.cpp}
-
+\clearpage
 \section{Python}\label{app:python}
 \lstinputlisting[style=python]{src/ReadSerial.py}
-
+\clearpage
 \section{Auswertung}\label{app:Auswertung}
+\subsection{Matlab-skript}\label{app:matlab}
+\lstinputlisting[style=custommatlab]{src/AuswertungHist.m}
+\clearpage
+\subsection{Plots}
 \includegraphics[width=\textwidth]{images/auswertungLS1.png}\\
 \includegraphics[width=\textwidth]{images/auswertungLS2.png}\\
 \includegraphics[width=\textwidth]{images/auswertungLS1LS2.png}\\
 \includegraphics[width=\textwidth]{images/auswertungInt.png}\\\
 
+
 \includegraphics[width=\textwidth]{images/auswertungSpeedUeb.png}\\
 \includegraphics[width=\textwidth]{images/auswertungSpeed.png}\\
+\clearpage
+
+\textbf{Gemessenens Signal bei 2000RPM}\newline
+\includegraphics[width=\textwidth]{images/sig2000.png}\\
+
+\textbf{Histogramm des gemessenen Signals bei 2000RPM}\newline
+\includegraphics[width=\textwidth]{images/hist2000.png}

@@ -3,13 +3,14 @@ File: BWMvelocity.cpp
 Author: Luca Mazzoleni
 Date: 27.11.2018
 
+HSR Hochschule Rapperswil
+
 Description:
 Programm which detects the Speed of an Object that passes two Lightbarrier.
 Either with interrupt or polling.
 
 Pythonscript for Datalogging:
 https://github.com/LMazzole/ArdPyt-ReadSerial
-
 */
 #include <Arduino.h>
 
@@ -22,7 +23,6 @@ or uncomment the corresponde define below. All modes are possible at the same ti
 // #define MYDEBUG  // Uncomment to see all DEBUG- Messages
 #define MYLOG //Uncomment to see all Log-Message. Check the Pythonfile for Serialdataloggin.
 #define USEINTERRUPT //Uncomment so use interrupts inseatd of polling
-
 
 //Define Debug-Function
 #ifdef MYDEBUG
@@ -81,7 +81,7 @@ void printlog(double speedinkmh[4]);
 #endif
 
 void setup() {
-  Serial.begin(9600);                // Set serial monitor baud rate. For Datalogging with python the baudrates need to be consistent
+  Serial.begin(57600);                // Set serial monitor baud rate. For Datalogging with python the baudrates need to be consistent
   #ifdef USEINTERRUPT
     attachInterrupt(digitalPinToInterrupt(lightbarrier1), ISRLB1, CHANGE);
     attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRLB2, CHANGE);
@@ -92,13 +92,13 @@ void setup() {
   LOG_PRINT("Iter"); LOG_PRINT("\t");
   LOG_PRINT("Bez"); LOG_PRINT("\t");
   #ifdef USEINTERRUPT
-    LOG_PRINT("Int LS 1"); LOG_PRINT("\t");
-    LOG_PRINT("Int LS 2"); LOG_PRINT("\t");
-    LOG_PRINT("Int LS 11-21"); LOG_PRINT("\t");
-    LOG_PRINT("Int LS 12-22");
+    LOG_PRINT("Int LB 1"); LOG_PRINT("\t");
+    LOG_PRINT("Int LB 2"); LOG_PRINT("\t");
+    LOG_PRINT("Int LB 11-21"); LOG_PRINT("\t");
+    LOG_PRINT("Int LB 12-22");
   #else
-    LOG_PRINT("Puls LS 1"); LOG_PRINT("\t");
-    LOG_PRINT("Puls LS 2");
+    LOG_PRINT("Puls LB 1"); LOG_PRINT("\t");
+    LOG_PRINT("Puls LB 2");
   #endif
   LOG_PRINTLN("");
 }
@@ -120,7 +120,8 @@ void loop() {
        printlog(velocitykmh);
      }
    interrupts();
-  #else
+   /*do something else*/
+  #else //Polling-Mode
      passingdurationLB1 = pulseIn(lightbarrier1, LOW);
         DEBUG_PRINTLN("passingdurationLB1: ");
         DEBUG_PRINTLN(passingdurationLB1);
