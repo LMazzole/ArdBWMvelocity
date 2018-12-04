@@ -3,6 +3,8 @@ File: BWMvelocity.cpp
 Author: Luca Mazzoleni
 Date: 27.11.2018
 
+HSR Hochschule Rapperswil
+
 Description:
 Programm which detects the Speed of an Object that passes two Lightbarrier.
 Either with interrupt or polling.
@@ -81,7 +83,7 @@ void printlog(double speedinkmh[4]);
 #endif
 
 void setup() {
-  Serial.begin(9600);                // Set serial monitor baud rate. For Datalogging with python the baudrates need to be consistent
+  Serial.begin(57600);                // Set serial monitor baud rate. For Datalogging with python the baudrates need to be consistent
   #ifdef USEINTERRUPT
     attachInterrupt(digitalPinToInterrupt(lightbarrier1), ISRLB1, CHANGE);
     attachInterrupt(digitalPinToInterrupt(lightbarrier2), ISRLB2, CHANGE);
@@ -120,7 +122,8 @@ void loop() {
        printlog(velocitykmh);
      }
    interrupts();
-  #else
+   /*do something else*/
+  #else //Polling-Mode
      passingdurationLB1 = pulseIn(lightbarrier1, LOW);
         DEBUG_PRINTLN("passingdurationLB1: ");
         DEBUG_PRINTLN(passingdurationLB1);
